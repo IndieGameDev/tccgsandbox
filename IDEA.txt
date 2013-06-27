@@ -1,0 +1,7 @@
+- should back-end and front-end be in one project?
+    No: they are separate entities kinda, and can be developed/tested/deployed separately
+    Yes: configuration for dev is simpler and faster is they are in one project
+
+- should allow everything to work with localhost for dev
+
+- environment should be configurable... time to learn ant/make?
