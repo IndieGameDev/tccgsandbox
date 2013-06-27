@@ -2,6 +2,33 @@
 <html>
 <head>
     <title>TCCG Sandbox</title>
+    <script src="../lib/dojo/dojo.js"></script>
+    <script>
+        var dojoConfig = {
+            baseUrl: "http://localhost/TCCG/tccgsandbox/",
+            tlmSiblingOfDojo: false,
+            async: true,
+            packages: [
+                { name: "dojo", location: "lib/dojo" },
+                { name: "dijit", location: "lib/dijit" },
+                { name: "dojox", location: "lib/dojox" },
+                { name: "sandbox", location: "lib/sandbox" }
+            ]
+        };
+
+        console.log("Dojo v"+dojo.version+" loaded!");
+        var card;
+
+        require(["sandbox/_base/Card"],
+        function(Card){
+            card = new Card();
+            if(!card.isFaceUp()){
+                console.log("Hmmm, card if not face up!");
+            }
+            card.flip();
+            console.log("Now card is "+(card.isFaceUp()?"":"not")+" face up");
+        });
+    </script>
 </head>
 <body>
       This is a beginning of a beautiful friendship ;)
