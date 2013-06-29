@@ -6,26 +6,51 @@
         <script>
             // WAMP session object
             var sess;
+            // This is my EC2 box, where I have a WAMP server running, listening for connections on port 9000
             var wsuri = "ws://ec2-54-226-58-190.compute-1.amazonaws.com:9000";
 
             window.onload = function() {
 
-                // connect to WAMP server
+                // When document finishes loading, we connect to WAMP server using the variable provided by autobahn.min.js included above
                 ab.connect(wsuri,
 
-                    // WAMP session was established
+                    // First argument is a callback to use when WAMP session is established
                     function(session) {
-    
+                        // Save the session object (in our global variable) - this is how we interact with the WS session later on
                         sess = session;
                         console.log("Connected to " + wsuri);
-    
-                        // subscribe to topic, providing an event handler
+                        console.log("Session dump:");
+                        console.log(JSON.stringify(sess));
+                        // Example of a session dump:
+                        // {"_wsuri":"ws://ec2-54-226-58-190.compute-1.amazonaws.com:9000",
+                        //  "_options":{"retryDelay":5000,
+                        //              "maxRetries":10,
+                        //              "skipSubprotocolCheck":false,
+                        //              "skipSubprotocolAnnounce":false
+                        //             },
+                        //  "_websocket":{},
+                        //  "_websocket_connected":true,
+                        //  "_session_id":"M8it3mKNpm58OzvE",
+                        //  "_wamp_version":1,
+                        //  "_server":"Autobahn/0.5.14",
+                        //  "_calls":{},
+                        //  "_subscriptions":{},
+                        //  "_prefixes":{"_index":{},
+                        //               "_rindex":{}
+                        //              },
+                        //  "_txcnt":0,"_rxcnt":0
+                        // }
+
+                        // Subscribe to topic and provide an event handler
+                        // Available topics are stored at the WAMP server
                         sess.subscribe("http://example.com/simple", onEvent);
                     },
     
-                    // WAMP session is gone
+                    // Second argument is a callback for when the connection is gone.
                     function(code, reason) {
-    
+                        // Drop the now useless session.
+                        console.log("Session dump:");
+                        console.log(JSON.stringify(sess));
                         sess = null;
                         console.log("Connection lost (" + reason + ")");
                 });
