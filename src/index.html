@@ -125,6 +125,12 @@
                 endTurn();
             });
         });
+
+        var card;
+        require(["sandbox/_base/Card"], function(Card){
+            card = new Card({name: "Card1", description: "Desc1"});
+            card.render();
+        });
     </script>
 </head>
 <body>
