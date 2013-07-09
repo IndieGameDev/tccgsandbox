@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="index.html" type="JavascriptDebugSession" factoryName="Local" singleton="true">
+    <JSDebuggerConfigurationSettings>
+      <option name="engineId" value="chrome" />
+      <option name="fileUrl" value="http://localhost/TCCG/tccgsandbox/src/index.html" />
+    </JSDebuggerConfigurationSettings>
+    <RunnerSettings RunnerId="JavascriptDebugRunner" />
+    <ConfigurationWrapper RunnerId="JavascriptDebugRunner" />
+    <method />
+  </configuration>
+</component>
