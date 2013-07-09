@@ -11,6 +11,7 @@ div#cardBox {
     padding: 0;
     margin: 0;
     bottom: 0;
+    overflow-x: scroll;
 }
 
 #cardBox > div {
@@ -21,4 +22,12 @@ div#cardBox {
     display: inline-block;
     overflow: hidden;
     vertical-align: top;
+}
+
+#deckBox {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 200px;
+    height: 200px;
 }

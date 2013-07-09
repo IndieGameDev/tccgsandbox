@@ -28,13 +28,21 @@
         function getCard(){
             var card = deck.drawCard();
             card.render();
+            renderDeck();
+        }
+
+        function renderDeck(){
+            dojo.query("#deckBox")[0].innerHTML = "";
+            deck.render('#deckBox');
         }
     </script>
 </head>
 <body>
-    <button onclick="deck.render('#cardBox');">Render Deck</button>
+    <button onclick="renderDeck();">Render Deck</button>
     <button onclick="getCard();">Draw Card</button>
     <div id="cardBox" align="center">
+    </div>
+    <div id="deckBox">
     </div>
 </body>
 </html>
