@@ -6,17 +6,19 @@ body {
 div#cardBox {
     background: #CCCCCC;
     width: 100%;
-    height: 30%;
+    height: 200px;
     position: absolute;
     padding: 0;
     margin: 0;
-    top: 10%;
+    bottom: 0;
 }
 
 #cardBox > div {
-    width: 140px;
-    height: 200px;
+    width: 100px;
+    height: 180px;
     background: #FF0000;
     opacity: 0.5;
     display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
 }

@@ -8,20 +8,33 @@
     <script>
         var deck;
         require(["sandbox/_base/Card", "sandbox/_base/Deck", "dojo/domReady!"], function(Card, Deck){
-            cards = [];
-            cards.push(new Card({name: "Card1", description: "Desc1"}));
-            cards.push(new Card({name: "Card2", description: "Desc2"}));
-            cards.push(new Card({name: "Card3", description: "Desc3"}));
-            cards.push(new Card({name: "Card4", description: "Desc4"}));
-            cards.push(new Card({name: "Card5", description: "Desc5"}));
-            cards.push(new Card({name: "Card6", description: "Desc6"}));
-            deck = new Deck({cards : cards});
+            dojo.xhrGet({url: "http://localhost/TCCG/tccgsandbox/services/php/madness/getCard.php",
+                async: true,
+                handleAs: "json",
+                content: {}}).then(
+                    function (data) {
+                        cards = [];
+                        for (var i = 0; i < data.length; i++) {
+                            cards.push(new Card({name: data[i].name, description: data[i].description}));
+                        }
+                        deck = new Deck({cards : cards});
+                    },
+                    function (data) {
+                        console.log("no deck found");
+                    }
+            );
         });
+
+        function getCard(){
+            var card = deck.drawCard();
+            card.render();
+        }
     </script>
 </head>
 <body>
+    <button onclick="deck.render('#cardBox');">Render Deck</button>
+    <button onclick="getCard();">Draw Card</button>
     <div id="cardBox" align="center">
     </div>
-    <div id="deckBox"></div>
 </body>
 </html>
