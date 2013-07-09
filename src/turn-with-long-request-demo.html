@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TCCG Sandbox</title>
+    <script src="../lib/dojo/dojo.js"></script>
+    <script>
+        var dojoConfig = {
+            baseUrl: "http://localhost/TCCG/tccgsandbox/",
+            tlmSiblingOfDojo: false,
+            async: true,
+            packages: [
+                { name: "dojo", location: "lib/dojo" },
+                { name: "dijit", location: "lib/dijit" },
+                { name: "dojox", location: "lib/dojox" },
+                { name: "sandbox", location: "lib/sandbox" }
+            ]
+        };
+
+        var myName = "";
+        var myPlayer = "";
+        var gameId = "";
+
+        console.log("Dojo v"+dojo.version+" loaded!");
+
+        function smartLongRequestHandler(){
+            dojo.xhrGet({url:"http://localhost/TCCG/tccgsandbox/services/php/madness/chunkedResponse.php",
+                async:true,
+                content: {pnum: myPlayer, gid: gameId}}).then(
+                    function(data){
+                        console.log("Something happened: "+data);
+                        startMyTurn();
+                    },
+                    function(data){
+                        console.log("error: "+data+" server probably timed out!");
+                        setTimeout(smartLongRequestHandler, 0);
+                    }
+            );
+        }
+
+        function connectUser(name){
+            dojo.xhrGet({url:"http://localhost/TCCG/tccgsandbox/services/php/madness/connect.php",
+                async:true,
+                handleAs: "json",
+                content: {pname: name}}).then(
+                    function(data){
+                        //success!
+                        //{"game":{"id":"30","p1":"Alex","p2":"Max","turnOwner":"p1"},"name":"Alex","myPlayer":"p1"}
+                        console.log(data.name+" connected as "+data.myPlayer+"!");
+                        myPlayer = data.myPlayer;
+                        gameId = data.game.id;
+
+                        handleGameData(data);
+
+                        smartLongRequestHandler();
+                    },
+                    function(data){
+                        console.log("Connect failed! Reconnecting...");
+                        connectUser(name);
+                    }
+            );
+        }
+
+        function endTurn(){
+            dojo.xhrGet({url:"http://localhost/TCCG/tccgsandbox/services/php/madness/endTurn.php",
+                async: true,
+                handleAs: "json",
+                content: {pname: myName, pnum: myPlayer, gid: gameId}}).then(
+                    function(data){
+                        require(["dojo/dom", "dojo/query", "dojo/dom-style", "dojo/dom-attr"], function(dom, query, style, attr){
+                            attr.set(dom.byId("endTurn"), "disabled", "true");
+                        });
+                        smartLongRequestHandler();
+                    },
+                    function(data){
+                        console.log("not ended");
+                    }
+            );
+        }
+
+        function startMyTurn(){
+            //alert("Now it is your turn!");
+            require(["dojo/dom", "dojo/query", "dojo/dom-style", "dojo/dom-attr"], function(dom, query, style, attr){
+                attr.remove(dom.byId("endTurn"), "disabled");
+            });
+            dojo.require("dijit.form.Button");
+            dojo.require("dojo.fx");
+            dojo.require("dojo.fx.easing");
+            var displayAnim = dojo.fx.chain([
+                dojo.fadeIn({node: "toast", duration: 1000}),
+                dojo.fadeOut({node: "toast", duration: 1000})
+            ]);
+            displayAnim.play();
+        }
+
+        function handleGameData(data){
+            require(["dojo/dom", "dojo/query", "dojo/dom-style", "dojo/dom-attr"], function(dom, query, style, attr){
+                query("#p1")[0].innerHTML = data.game.p1;
+                query("#p2")[0].innerHTML = data.game.p2;
+                style.set(dom.byId("p1"), "color", "red");
+                style.set(dom.byId("p2"), "color", "red");
+                style.set(dom.byId(data.myPlayer), "color", "blue");
+                style.set(dom.byId("playerName"), "display", "none");
+                style.set(dom.byId("connectToGame"), "display", "none");
+                style.set(dom.byId("endTurn"), "display", "block");
+                if(myPlayer == data.game.turnOwner){
+                    attr.remove(dom.byId("endTurn"), "disabled");
+                } else {
+                    attr.set(dom.byId("endTurn"), "disabled", "true");
+                }
+            });
+        }
+
+        require(["dojo/on", "dojo/dom", "dojo/query", "dojo/domReady!"],
+                function(on, dom, query){
+                    var btn = query("#connectToGame")[0];
+                    on(btn, "click", function(e){
+                        var name = query("#playerName")[0].value;
+                        myName = name;
+                        connectUser(name);
+                        console.log("connecting...");
+                    });
+
+                    var endBtn = query("#endTurn")[0];
+                    on(endBtn, "click", function(e){
+                        endTurn();
+                    });
+                });
+    </script>
+</head>
+<body>
+<div id="topBlock">
+    <h3 id="p1" style="float:left;">...</h3>
+    <h2 style="float:left;padding-left:20px;padding-right:20px;">vs</h2>
+    <h3 id="p2" style="float:left;">...</h3>
+</div><br>
+<div style="clear:left"><br></div>
+This is a beginning of a beautiful friendship ;)<br><br>
+<input id="playerName" type="text">
+<input id="connectToGame" type="button" value="connect">
+<input id="endTurn" type="button" disabled style="display:none;" value="END TURN">
+<h1 id="toast" style="color:red; position: absolute; left:45%; top:10%; opacity: 0;">Your turn!</h1>
+</body>
+</html>
