@@ -6,43 +6,13 @@
     <script src="../lib/dojo/dojo.js"></script>
     <script src="config.js"></script>
     <script>
-        var deck;
-        require(["sandbox/_base/Card", "sandbox/_base/Deck", "dojo/domReady!"], function(Card, Deck){
-            dojo.xhrGet({url: "http://localhost/TCCG/tccgsandbox/services/php/madness/getCard.php",
-                async: true,
-                handleAs: "json",
-                content: {}}).then(
-                    function (data) {
-                        cards = [];
-                        for (var i = 0; i < data.length; i++) {
-                            cards.push(new Card({name: data[i].name, description: data[i].description}));
-                        }
-                        deck = new Deck({cards : cards});
-                    },
-                    function (data) {
-                        console.log("no deck found");
-                    }
-            );
+        var game;
+        require(["sandbox/_base/Game", "dojo/domReady!"], function(Game){
+            game = new Game();
         });
-
-        function getCard(){
-            var card = deck.drawCard();
-            card.render();
-            renderDeck();
-        }
-
-        function renderDeck(){
-            dojo.query("#deckBox")[0].innerHTML = "";
-            deck.render('#deckBox');
-        }
     </script>
 </head>
 <body>
-    <button onclick="renderDeck();">Render Deck</button>
-    <button onclick="getCard();">Draw Card</button>
-    <div id="cardBox" align="center">
-    </div>
-    <div id="deckBox">
-    </div>
+
 </body>
 </html>
